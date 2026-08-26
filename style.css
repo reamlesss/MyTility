@@ -472,7 +472,7 @@ textarea::placeholder {
   color: var(--muted);
 }
 [data-theme="dark"] textarea::placeholder {
-  color: #d9e0f2;
+  color: #d9e0f29f;
   opacity: 1;
 }
 .btn-primary {
