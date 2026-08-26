@@ -11,238 +11,316 @@ const exportButton = document.getElementById("exportButton");
 const clearButton = document.getElementById("clearButton");
 
 const tableExport = document.getElementById("tableExport");
+const themeToggle = document.getElementById("themeToggle");
+const tableTitleInput = document.getElementById("tableTitleInput");
+const tableExportTitle = tableExport.querySelector(".table-export-title");
+const homeSection = document.getElementById("homeSection");
+const toolSection = document.getElementById("toolSection");
+const openCsvTool = document.getElementById("openCsvTool");
+const backToHome = document.getElementById("backToHome");
 
+function showCsvTool() {
+  homeSection.hidden = true;
+  toolSection.hidden = false;
+}
+
+function showHome() {
+  toolSection.hidden = true;
+  homeSection.hidden = false;
+}
+
+openCsvTool.addEventListener("click", showCsvTool);
+backToHome.addEventListener("click", showHome);
+const toolsMenuToggle = document.getElementById("toolsMenuToggle");
+const toolsDropdown = document.getElementById("toolsDropdown");
+
+toolsMenuToggle.addEventListener("click", function () {
+  const isOpen = toolsMenuToggle.getAttribute("aria-expanded") === "true";
+  toolsMenuToggle.setAttribute("aria-expanded", String(!isOpen));
+  toolsDropdown.hidden = isOpen;
+});
+
+document.addEventListener("click", function (event) {
+  if (!event.target.closest(".tools-menu")) {
+    toolsMenuToggle.setAttribute("aria-expanded", "false");
+    toolsDropdown.hidden = true;
+  }
+});
+
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Escape") {
+    toolsMenuToggle.setAttribute("aria-expanded", "false");
+    toolsDropdown.hidden = true;
+  }
+});
+
+function updateTableTitle() {
+  const title = tableTitleInput.value.trim() || "CSV Table";
+  tableExportTitle.textContent = title;
+}
+
+tableTitleInput.addEventListener("input", updateTableTitle);
+updateTableTitle();
 
 // -----------------------------
-// Kontrola knihoven
+// Dark mode
+// -----------------------------
+
+const savedTheme = localStorage.getItem("csv-table-theme");
+if (
+  savedTheme === "dark" ||
+  (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)
+) {
+  document.documentElement.dataset.theme = "dark";
+}
+
+function updateThemeButton() {
+  const isDark = document.documentElement.dataset.theme === "dark";
+  themeToggle.innerHTML = `<i class="bi bi-${isDark ? "sun-fill" : "moon-stars-fill"}"></i><span class="d-none d-sm-inline">${isDark ? "Light mode" : "Dark mode"}</span>`;
+  themeToggle.setAttribute(
+    "aria-label",
+    isDark ? "Switch to light mode" : "Switch to dark mode",
+  );
+}
+
+updateThemeButton();
+themeToggle.addEventListener("click", function () {
+  const isDark = document.documentElement.dataset.theme === "dark";
+  document.documentElement.dataset.theme = isDark ? "light" : "dark";
+  localStorage.setItem("csv-table-theme", isDark ? "light" : "dark");
+  updateThemeButton();
+});
+
+// -----------------------------
+// Library checks
 // -----------------------------
 
 if (typeof Papa === "undefined") {
-    console.error("Papa Parse se nepodařilo načíst.");
+  console.error("Papa Parse could not be loaded.");
 }
 
 if (typeof htmlToImage === "undefined") {
-    console.error("html-to-image se nepodařilo načíst.");
+  console.error("html-to-image could not be loaded.");
 }
 
-
 // -----------------------------
-// Nahrání CSV souboru
+// CSV file upload
 // -----------------------------
 
 csvFile.addEventListener("change", function () {
+  const file = csvFile.files[0];
 
-    const file = csvFile.files[0];
+  if (!file) {
+    return;
+  }
 
-    if (!file) {
-        return;
-    }
+  fileInfo.textContent = `Selected file: ${file.name}`;
 
-    fileInfo.textContent = `Vybraný soubor: ${file.name}`;
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
 
-    Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
+    complete: function (results) {
+      console.log("CSV data:", results.data);
 
-        complete: function (results) {
+      createTable(results.data);
 
-            console.log("CSV data:", results.data);
+      tableSection.classList.remove("d-none");
+    },
 
-            createTable(results.data);
+    error: function (error) {
+      console.error("Error loading CSV:", error);
 
-            tableSection.classList.remove("d-none");
-        },
-
-        error: function (error) {
-
-            console.error("Chyba při načítání CSV:", error);
-
-            alert("CSV soubor se nepodařilo načíst.");
-        }
-    });
-
+      alert("The CSV file could not be loaded.");
+    },
+  });
 });
 
-
 // -----------------------------
-// Vytvoření tabulky z textu
+// Create table from text
 // -----------------------------
 
 createTableButton.addEventListener("click", function () {
+  const text = csvText.value.trim();
 
-    const text = csvText.value.trim();
+  if (!text) {
+    alert("Paste CSV data first.");
+    return;
+  }
 
-    if (!text) {
-        alert("Nejdříve vlož CSV data.");
+  Papa.parse(text, {
+    header: true,
+    skipEmptyLines: true,
+
+    complete: function (results) {
+      console.log("CSV data:", results.data);
+
+      if (!results.data || results.data.length === 0) {
+        alert("The CSV contains no data.");
         return;
-    }
+      }
 
-    Papa.parse(text, {
-        header: true,
-        skipEmptyLines: true,
+      createTable(results.data);
 
-        complete: function (results) {
+      tableSection.classList.remove("d-none");
+    },
 
-            console.log("CSV data:", results.data);
+    error: function (error) {
+      console.error("Error processing CSV:", error);
 
-            if (!results.data || results.data.length === 0) {
-                alert("CSV neobsahuje žádná data.");
-                return;
-            }
-
-            createTable(results.data);
-
-            tableSection.classList.remove("d-none");
-
-        },
-
-        error: function (error) {
-
-            console.error("Chyba při zpracování CSV:", error);
-
-            alert("CSV data se nepodařilo zpracovat.");
-        }
-    });
-
+      alert("The CSV data could not be processed.");
+    },
+  });
 });
 
-
 // -----------------------------
-// Vytvoření HTML tabulky
+// Create HTML table
 // -----------------------------
 
 function createTable(data) {
+  csvTable.innerHTML = "";
 
-    csvTable.innerHTML = "";
-
-    if (!data || data.length === 0) {
-
-        csvTable.innerHTML = `
+  if (!data || data.length === 0) {
+    csvTable.innerHTML = `
             <tbody>
                 <tr>
                     <td class="text-center text-secondary">
-                        CSV neobsahuje žádná data.
+                        The CSV contains no data.
                     </td>
                 </tr>
             </tbody>
         `;
 
-        return;
-    }
+    return;
+  }
 
+  // -----------------------------
+  // Header
+  // -----------------------------
 
-    // -----------------------------
-    // Hlavička
-    // -----------------------------
+  const headers = Object.keys(data[0]);
 
-    const headers = Object.keys(data[0]);
+  const thead = document.createElement("thead");
+  const headerRow = document.createElement("tr");
 
-    const thead = document.createElement("thead");
-    const headerRow = document.createElement("tr");
+  headers.forEach(function (header) {
+    const th = document.createElement("th");
+
+    th.textContent = header;
+
+    headerRow.appendChild(th);
+  });
+
+  thead.appendChild(headerRow);
+
+  csvTable.appendChild(thead);
+
+  // -----------------------------
+  // Table body
+  // -----------------------------
+
+  const tbody = document.createElement("tbody");
+
+  data.forEach(function (row) {
+    const tr = document.createElement("tr");
 
     headers.forEach(function (header) {
+      const td = document.createElement("td");
 
-        const th = document.createElement("th");
+      td.textContent = row[header] ?? "";
 
-        th.textContent = header;
-
-        headerRow.appendChild(th);
-
+      tr.appendChild(td);
     });
 
-    thead.appendChild(headerRow);
+    tbody.appendChild(tr);
+  });
 
-    csvTable.appendChild(thead);
-
-
-    // -----------------------------
-    // Tělo tabulky
-    // -----------------------------
-
-    const tbody = document.createElement("tbody");
-
-    data.forEach(function (row) {
-
-        const tr = document.createElement("tr");
-
-        headers.forEach(function (header) {
-
-            const td = document.createElement("td");
-
-            td.textContent = row[header] ?? "";
-
-            tr.appendChild(td);
-
-        });
-
-        tbody.appendChild(tr);
-
-    });
-
-    csvTable.appendChild(tbody);
+  csvTable.appendChild(tbody);
 }
-
 
 // -----------------------------
 // Export tabulky jako PNG
 // -----------------------------
 
 exportButton.addEventListener("click", async function () {
+  if (typeof htmlToImage === "undefined") {
+    alert("The export library could not be loaded.");
+    return;
+  }
 
-    if (typeof htmlToImage === "undefined") {
-        alert("Exportní knihovna se nepodařila načíst.");
-        return;
-    }
+  const originalExportStyles = {
+    width: tableExport.style.width,
+    maxWidth: tableExport.style.maxWidth,
+    overflow: tableExport.style.overflow,
+    responsiveOverflow:
+      tableExport.querySelector(".table-responsive").style.overflow,
+    tableWidth: csvTable.style.width,
+    tableMinWidth: csvTable.style.minWidth,
+  };
 
-    try {
+  try {
+    exportButton.disabled = true;
+    exportButton.innerHTML =
+      '<i class="bi bi-hourglass-split me-1"></i>Generating image...';
 
-        exportButton.disabled = true;
-        exportButton.textContent = "Generuji obrázek...";
+    // .table-responsive can crop wide tables.
+    // Temporarily expand the rendered element so html-to-image
+    // captures the entire table without creating an empty clone.
+    const exportWidth = Math.max(
+      tableExport.clientWidth,
+      csvTable.scrollWidth + 60,
+    );
 
+    tableExport.style.width = `${exportWidth}px`;
+    tableExport.style.maxWidth = "none";
+    tableExport.style.overflow = "visible";
+    tableExport.querySelector(".table-responsive").style.overflow = "visible";
+    csvTable.style.width = "max-content";
+    csvTable.style.minWidth = "100%";
 
-        const dataUrl = await htmlToImage.toPng(tableExport, {
-            pixelRatio: 2,
-            backgroundColor: "#ffffff"
-        });
+    const dataUrl = await htmlToImage.toPng(tableExport, {
+      pixelRatio: 2,
+      backgroundColor: "#ffffff",
+    });
 
+    // Create download link
+    const link = document.createElement("a");
 
-        // Vytvoření odkazu pro stažení
-        const link = document.createElement("a");
+    link.download = "csv-table.png";
+    link.href = dataUrl;
 
-        link.download = "csv-table.png";
-        link.href = dataUrl;
+    link.click();
+  } catch (error) {
+    console.error("Error exporting table:", error);
 
-        link.click();
-
-    } catch (error) {
-
-        console.error("Chyba při exportu:", error);
-
-        alert("Tabulku se nepodařilo exportovat jako obrázek.");
-
-    } finally {
-
-        exportButton.disabled = false;
-        exportButton.textContent = "Stáhnout jako PNG";
-
-    }
-
+    alert("The table could not be exported as an image.");
+  } finally {
+    tableExport.style.width = originalExportStyles.width;
+    tableExport.style.maxWidth = originalExportStyles.maxWidth;
+    tableExport.style.overflow = originalExportStyles.overflow;
+    tableExport.querySelector(".table-responsive").style.overflow =
+      originalExportStyles.responsiveOverflow;
+    csvTable.style.width = originalExportStyles.tableWidth;
+    csvTable.style.minWidth = originalExportStyles.tableMinWidth;
+    exportButton.disabled = false;
+    exportButton.innerHTML =
+      '<i class="bi bi-download me-1"></i>Download as PNG';
+  }
 });
 
-
 // -----------------------------
-// Vymazání všeho
+// Clear everything
 // -----------------------------
 
 clearButton.addEventListener("click", function () {
+  csvFile.value = "";
+  csvText.value = "";
+  tableTitleInput.value = "CSV Table";
+  updateTableTitle();
 
-    csvFile.value = "";
-    csvText.value = "";
+  fileInfo.textContent = "";
 
-    fileInfo.textContent = "";
+  csvTable.innerHTML = "";
 
-    csvTable.innerHTML = "";
-
-    tableSection.classList.add("d-none");
-
+  tableSection.classList.add("d-none");
 });
