@@ -18,6 +18,23 @@ const homeSection = document.getElementById("homeSection");
 const toolSection = document.getElementById("toolSection");
 const openCsvTool = document.getElementById("openCsvTool");
 const backToHome = document.getElementById("backToHome");
+const uploadModeButton = document.getElementById("uploadModeButton");
+const pasteModeButton = document.getElementById("pasteModeButton");
+const uploadMode = document.getElementById("uploadMode");
+const pasteMode = document.getElementById("pasteMode");
+
+function selectInputMode(mode) {
+  const uploadSelected = mode === "upload";
+  uploadMode.hidden = !uploadSelected;
+  pasteMode.hidden = uploadSelected;
+  uploadModeButton.classList.toggle("active", uploadSelected);
+  pasteModeButton.classList.toggle("active", !uploadSelected);
+  uploadModeButton.setAttribute("aria-selected", String(uploadSelected));
+  pasteModeButton.setAttribute("aria-selected", String(!uploadSelected));
+}
+
+uploadModeButton.addEventListener("click", () => selectInputMode("upload"));
+pasteModeButton.addEventListener("click", () => selectInputMode("paste"));
 
 function showCsvTool() {
   homeSection.hidden = true;
@@ -257,6 +274,7 @@ exportButton.addEventListener("click", async function () {
     tableWidth: csvTable.style.width,
     tableMinWidth: csvTable.style.minWidth,
   };
+  const originalTitleDisplay = tableExportTitle.style.display;
 
   try {
     exportButton.disabled = true;
@@ -277,6 +295,7 @@ exportButton.addEventListener("click", async function () {
     tableExport.querySelector(".table-responsive").style.overflow = "visible";
     csvTable.style.width = "max-content";
     csvTable.style.minWidth = "100%";
+    tableExportTitle.style.display = "none";
 
     const dataUrl = await htmlToImage.toPng(tableExport, {
       pixelRatio: 2,
@@ -302,6 +321,7 @@ exportButton.addEventListener("click", async function () {
       originalExportStyles.responsiveOverflow;
     csvTable.style.width = originalExportStyles.tableWidth;
     csvTable.style.minWidth = originalExportStyles.tableMinWidth;
+    tableExportTitle.style.display = originalTitleDisplay;
     exportButton.disabled = false;
     exportButton.innerHTML =
       '<i class="bi bi-download me-1"></i>Download as PNG';

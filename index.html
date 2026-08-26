@@ -89,44 +89,51 @@
                             </div>
                         </div>
 
-
-                        <!-- File upload -->
-                        <div class="mb-4">
-
-                            <label for="csvFile" class="form-label fw-semibold">
-                                Upload CSV file
-                            </label>
-
-                            <label for="csvFile" class="upload-zone">
-                                <i class="bi bi-file-earmark-spreadsheet"></i>
-                                <span><strong>Choose a CSV file</strong> or drag it here</span>
-                                <small>Supported format: .csv</small>
-                            </label>
-                            <input type="file" id="csvFile" class="visually-hidden" accept=".csv">
-
-                            <div id="fileInfo" class="mt-2 text-secondary small"></div>
-
+                        <div class="input-mode-switch mb-4" role="tablist" aria-label="CSV input method">
+                            <button id="uploadModeButton" class="mode-button active" type="button" role="tab"
+                                aria-selected="true">
+                                <i class="bi bi-upload"></i> Upload file
+                            </button>
+                            <button id="pasteModeButton" class="mode-button" type="button" role="tab"
+                                aria-selected="false">
+                                <i class="bi bi-clipboard"></i> Paste text
+                            </button>
                         </div>
 
+                        <div id="uploadMode">
+                            <!-- File upload -->
+                            <div class="mb-4">
 
-                        <!-- Divider -->
-                        <div class="divider text-secondary mb-4">
-                            <span>or paste text</span>
+                                <label for="csvFile" class="form-label fw-semibold">
+                                    Upload CSV file
+                                </label>
+
+                                <label for="csvFile" class="upload-zone">
+                                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                                    <span><strong>Choose a CSV file</strong> or drag it here</span>
+                                    <small>Supported format: .csv</small>
+                                </label>
+                                <input type="file" id="csvFile" class="visually-hidden" accept=".csv">
+
+                                <div id="fileInfo" class="mt-2 text-secondary small"></div>
+
+                            </div>
                         </div>
 
+                        <div id="pasteMode" hidden>
+                            <!-- Text input -->
+                            <div class="mb-3">
 
-                        <!-- Text input -->
-                        <div class="mb-3">
+                                <label for="csvText" class="form-label fw-semibold">
+                                    Paste CSV as text
+                                </label>
 
-                            <label for="csvText" class="form-label fw-semibold">
-                                Paste CSV as text
-                            </label>
-
-                            <textarea id="csvText" class="form-control" rows="8" placeholder="Name,Age,City
+                                <textarea id="csvText" class="form-control" rows="8" placeholder="Name,Age,City
 Peter,21,Prague
 Martin,24,Brno
 Thomas,19,Benesov"></textarea>
 
+                            </div>
                         </div>
 
 
@@ -149,54 +156,54 @@ Thomas,19,Benesov"></textarea>
                         </button>
 
                     </div>
+                </div>
+        </div>
 
+        </main>
+
+
+        <!-- Tabulka -->
+        <div id="tableSection" class="d-none">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <div>
+                    <div class="eyebrow">RESULT</div>
+                    <h4 class="mb-0">Table preview</h4>
                 </div>
 
-            </main>
+                <div class="d-flex gap-2">
 
+                    <button id="exportButton" class="btn btn-success btn-sm" type="button">
+                        <i class="bi bi-download me-1"></i>Download as PNG
+                    </button>
 
-            <!-- Tabulka -->
-            <div id="tableSection" class="d-none">
-
-                <div class="d-flex justify-content-between align-items-center mb-3">
-
-                    <div>
-                        <div class="eyebrow">RESULT</div>
-                        <h4 class="mb-0">Table preview</h4>
-                    </div>
-
-                    <div class="d-flex gap-2">
-
-                        <button id="exportButton" class="btn btn-success btn-sm" type="button">
-                            <i class="bi bi-download me-1"></i>Download as PNG
-                        </button>
-
-                        <button id="clearButton" class="btn btn-outline-danger btn-sm" type="button">
-                            <i class="bi bi-trash3 me-1"></i>Clear
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- This section will be exported -->
-                <div id="tableExport" class="table-export">
-
-                    <div class="table-export-title">
-                        CSV Table
-                    </div>
-
-                    <div class="table-responsive">
-
-                        <table id="csvTable" class="table table-striped table-hover mb-0"></table>
-
-                    </div>
+                    <button id="clearButton" class="btn btn-outline-danger btn-sm" type="button">
+                        <i class="bi bi-trash3 me-1"></i>Clear
+                    </button>
 
                 </div>
 
             </div>
+
+
+            <!-- This section will be exported -->
+            <div id="tableExport" class="table-export">
+
+                <div class="table-export-title">
+                    CSV Table
+                </div>
+
+                <div class="table-responsive">
+
+                    <table id="csvTable" class="table table-striped table-hover mb-0"></table>
+
+                </div>
+
+            </div>
+
         </div>
+    </div>
 
     </div>
 

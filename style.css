@@ -381,6 +381,31 @@ h4 {
   border-radius: 12px;
   font-size: 20px;
 }
+.input-mode-switch {
+  display: inline-flex;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--bg);
+}
+.mode-button {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 13px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+}
+.mode-button:hover,
+.mode-button.active {
+  color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(33, 45, 75, 0.08);
+}
+.mode-button i {
+  margin-right: 5px;
+}
 .text-secondary {
   color: var(--muted) !important;
 }
