@@ -1,0 +1,45 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.card {
+    border: none;
+}
+
+#csvTable {
+    vertical-align: middle;
+}
+
+#csvTable th {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+#csvTable td {
+    white-space: nowrap;
+}
+
+#fileInfo {
+    min-height: 20px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+
+/* -----------------------------
+   Export obrázku
+----------------------------- */
+
+.table-export {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+}
+
+.table-export-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
