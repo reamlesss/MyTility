@@ -90,7 +90,7 @@ document.addEventListener("keydown", function (event) {
 });
 
 function updateTableTitle() {
-  const title = tableTitleInput.value.trim() || "CSV Table";
+  const title = tableTitleInput.value.trim() || "CSV tabulka";
   tableExportTitle.textContent = title;
 }
 
@@ -111,10 +111,10 @@ if (
 
 function updateThemeButton() {
   const isDark = document.documentElement.dataset.theme === "dark";
-  themeToggle.innerHTML = `<i class="bi bi-${isDark ? "sun-fill" : "moon-stars-fill"}"></i><span class="d-none d-sm-inline">${isDark ? "Light mode" : "Dark mode"}</span>`;
+  themeToggle.innerHTML = `<i class="bi bi-${isDark ? "sun-fill" : "moon-stars-fill"}"></i><span class="d-none d-sm-inline">${isDark ? "Světlý režim" : "Tmavý režim"}</span>`;
   themeToggle.setAttribute(
     "aria-label",
-    isDark ? "Switch to light mode" : "Switch to dark mode",
+    isDark ? "Přepnout na světlý režim" : "Přepnout na tmavý režim",
   );
 }
 
@@ -131,11 +131,11 @@ themeToggle.addEventListener("click", function () {
 // -----------------------------
 
 if (typeof Papa === "undefined") {
-  console.error("Papa Parse could not be loaded.");
+  console.error("Knihovnu Papa Parse se nepodařilo načíst.");
 }
 
 if (typeof htmlToImage === "undefined") {
-  console.error("html-to-image could not be loaded.");
+  console.error("Knihovnu html-to-image se nepodařilo načíst.");
 }
 
 // -----------------------------
@@ -149,7 +149,7 @@ csvFile.addEventListener("change", function () {
     return;
   }
 
-  fileInfo.textContent = `Selected file: ${file.name}`;
+  fileInfo.textContent = `Vybraný soubor: ${file.name}`;
 
   Papa.parse(file, {
     header: true,
@@ -166,7 +166,7 @@ csvFile.addEventListener("change", function () {
     error: function (error) {
       console.error("Error loading CSV:", error);
 
-      alert("The CSV file could not be loaded.");
+      alert("CSV se nepodařilo načíst.");
     },
   });
 });
@@ -179,7 +179,7 @@ createTableButton.addEventListener("click", function () {
   const text = csvText.value.trim();
 
   if (!text) {
-    alert("Paste CSV data first.");
+    alert("Nejdřív sem vlož CSV data, kámo.");
     return;
   }
 
@@ -191,7 +191,7 @@ createTableButton.addEventListener("click", function () {
       console.log("CSV data:", results.data);
 
       if (!results.data || results.data.length === 0) {
-        alert("The CSV contains no data.");
+        alert("CSV je prázdné. Tady toho moc nevykouzlíme 💀");
         return;
       }
 
@@ -203,7 +203,7 @@ createTableButton.addEventListener("click", function () {
     error: function (error) {
       console.error("Error processing CSV:", error);
 
-      alert("The CSV data could not be processed.");
+      alert("CSV se nepodařilo zpracovat.");
     },
   });
 });
@@ -220,7 +220,7 @@ function createTable(data) {
             <tbody>
                 <tr>
                     <td class="text-center text-secondary">
-                        The CSV contains no data.
+                        CSV je prázdné. Žádná data, žádný table W.
                     </td>
                 </tr>
             </tbody>
@@ -279,7 +279,7 @@ function createTable(data) {
 
 exportButton.addEventListener("click", async function () {
   if (typeof htmlToImage === "undefined") {
-    alert("The export library could not be loaded.");
+    alert("Knihovnu pro export se nepodařilo načíst.");
     return;
   }
 
@@ -297,7 +297,7 @@ exportButton.addEventListener("click", async function () {
   try {
     exportButton.disabled = true;
     exportButton.innerHTML =
-      '<i class="bi bi-hourglass-split me-1"></i>Generating image...';
+      '<i class="bi bi-hourglass-split me-1"></i>Generuju obrázek...';
 
     // .table-responsive can crop wide tables.
     // Temporarily expand the rendered element so html-to-image
@@ -330,7 +330,7 @@ exportButton.addEventListener("click", async function () {
   } catch (error) {
     console.error("Error exporting table:", error);
 
-    alert("The table could not be exported as an image.");
+    alert("Tabulku se nepodařilo exportovat jako obrázek.");
   } finally {
     tableExport.style.width = originalExportStyles.width;
     tableExport.style.maxWidth = originalExportStyles.maxWidth;
@@ -342,7 +342,7 @@ exportButton.addEventListener("click", async function () {
     tableExportTitle.style.display = originalTitleDisplay;
     exportButton.disabled = false;
     exportButton.innerHTML =
-      '<i class="bi bi-download me-1"></i>Download as PNG';
+      '<i class="bi bi-download me-1"></i>Stáhnout jako PNG';
   }
 });
 
@@ -353,7 +353,7 @@ exportButton.addEventListener("click", async function () {
 clearButton.addEventListener("click", function () {
   csvFile.value = "";
   csvText.value = "";
-  tableTitleInput.value = "CSV Table";
+  tableTitleInput.value = "CSV tabulka";
   updateTableTitle();
 
   fileInfo.textContent = "";
@@ -434,7 +434,7 @@ function renderEmployeeResult(values) {
           <div class="employee-result-value">
             <strong>${escapeHtml(values[field.key])}</strong>
             <button class="copy-field-button" type="button" data-copy-key="${field.key}"
-              aria-label="Copy ${field.label}" title="Copy ${field.label}">
+              aria-label="Kopírovat ${field.label}" title="Kopírovat ${field.label}">
               <i class="bi bi-copy"></i>
             </button>
           </div>
@@ -455,7 +455,7 @@ extractEmployeeButton.addEventListener("click", function () {
   const text = employeeFormText.value.trim();
 
   if (!text) {
-    alert("Paste the employee form first.");
+    alert("Nejdřív sem vlož formulář zaměstnance, bro.");
     employeeFormText.focus();
     return;
   }
@@ -467,14 +467,14 @@ async function copyEmployeeText(text, button, defaultContent) {
   try {
     await navigator.clipboard.writeText(text);
     button.innerHTML = '<i class="bi bi-check2"></i>';
-    button.setAttribute("aria-label", "Copied");
+    button.setAttribute("aria-label", "Zkopírováno");
     setTimeout(() => {
       button.innerHTML = defaultContent;
-      button.setAttribute("aria-label", button.title || "Copy");
+      button.setAttribute("aria-label", button.title || "Kopírovat");
     }, 1600);
   } catch (error) {
-    console.error("Could not copy employee data:", error);
-    alert("The extracted data could not be copied.");
+    console.error("Data zaměstnance se nepodařilo zkopírovat:", error);
+    alert("Data se nepodařilo zkopírovat.");
   }
 }
 
@@ -498,6 +498,6 @@ copyEmployeeResultButton.addEventListener("click", function () {
   copyEmployeeText(
     result,
     copyEmployeeResultButton,
-    '<i class="bi bi-copy me-1"></i>Copy all',
+    '<i class="bi bi-copy me-1"></i>Kopírovat vše',
   );
 });
