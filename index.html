@@ -49,6 +49,15 @@
                         </span>
                         <i class="bi bi-arrow-right ms-auto"></i>
                     </button>
+
+                    <button id="openHelpdeskTool" class="home-tool-button" type="button">
+                        <span class="home-tool-icon"><i class="bi bi-table"></i></span>
+                        <span class="text-start">
+                            <strong>VstupakHelper</strong>
+                            <small>Usnadnění vstupáků</small>
+                        </span>
+                        <i class="bi bi-arrow-right ms-auto"></i>
+                    </button>
                 </div>
             </div>
         </section>
@@ -204,6 +213,48 @@ Thomas,19,Benesov"></textarea>
 
         </div>
     </div>
+
+    <!-- VstupakHelper page -->
+    <section id="helpdeskSection" class="animate-fade-in" hidden>
+        <button id="backToHomeFromHelpdesk" class="back-button mb-3" type="button">
+            <i class="bi bi-arrow-left"></i> Back to tools
+        </button>
+
+        <main class="main-content mb-5">
+            <div class="card input-card shadow-sm">
+                <div class="card-body p-4">
+                    <div class="section-heading mb-4">
+                        <div class="section-icon"><i class="bi bi-person-vcard"></i></div>
+                        <div>
+                            <h4 class="mb-1">VstupakHelper</h4>
+                            <p class="text-secondary mb-0">Paste an employee form to extract the account setup data.</p>
+                        </div>
+                    </div>
+
+                    <label for="employeeFormText" class="form-label fw-semibold">Employee form</label>
+                    <textarea id="employeeFormText" class="form-control mb-3" rows="14"
+                        placeholder="Paste the complete employee form here..."></textarea>
+
+                    <button id="extractEmployeeButton" class="btn btn-primary" type="button">
+                        <i class="bi bi-magic me-2"></i>Extract data
+                    </button>
+                </div>
+            </div>
+
+            <section id="employeeResultSection" class="employee-result mt-4" hidden aria-live="polite">
+                <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+                    <div>
+                        <div class="eyebrow">RESULT</div>
+                        <h4 class="mb-0">Account setup data</h4>
+                    </div>
+                    <button id="copyEmployeeResultButton" class="btn btn-outline-primary btn-sm" type="button">
+                        <i class="bi bi-copy me-1"></i>Copy all
+                    </button>
+                </div>
+                <div id="employeeResultGrid" class="employee-result-grid"></div>
+            </section>
+        </main>
+    </section>
 
     </div>
 

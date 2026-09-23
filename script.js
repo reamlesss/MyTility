@@ -17,7 +17,15 @@ const tableExportTitle = tableExport.querySelector(".table-export-title");
 const homeSection = document.getElementById("homeSection");
 const toolSection = document.getElementById("toolSection");
 const openCsvTool = document.getElementById("openCsvTool");
+const openHelpdeskTool = document.getElementById("openHelpdeskTool");
 const backToHome = document.getElementById("backToHome");
+const backToHomeFromHelpdesk = document.getElementById("backToHomeFromHelpdesk");
+const helpdeskSection = document.getElementById("helpdeskSection");
+const employeeFormText = document.getElementById("employeeFormText");
+const extractEmployeeButton = document.getElementById("extractEmployeeButton");
+const employeeResultSection = document.getElementById("employeeResultSection");
+const employeeResultGrid = document.getElementById("employeeResultGrid");
+const copyEmployeeResultButton = document.getElementById("copyEmployeeResultButton");
 const uploadModeButton = document.getElementById("uploadModeButton");
 const pasteModeButton = document.getElementById("pasteModeButton");
 const uploadMode = document.getElementById("uploadMode");
@@ -38,16 +46,26 @@ pasteModeButton.addEventListener("click", () => selectInputMode("paste"));
 
 function showCsvTool() {
   homeSection.hidden = true;
+  helpdeskSection.hidden = true;
   toolSection.hidden = false;
+}
+
+function showHelpdeskTool() {
+  homeSection.hidden = true;
+  toolSection.hidden = true;
+  helpdeskSection.hidden = false;
 }
 
 function showHome() {
   toolSection.hidden = true;
+  helpdeskSection.hidden = true;
   homeSection.hidden = false;
 }
 
 openCsvTool.addEventListener("click", showCsvTool);
+openHelpdeskTool.addEventListener("click", showHelpdeskTool);
 backToHome.addEventListener("click", showHome);
+backToHomeFromHelpdesk.addEventListener("click", showHome);
 const toolsMenuToggle = document.getElementById("toolsMenuToggle");
 const toolsDropdown = document.getElementById("toolsDropdown");
 
@@ -343,4 +361,143 @@ clearButton.addEventListener("click", function () {
   csvTable.innerHTML = "";
 
   tableSection.classList.add("d-none");
+});
+
+// -----------------------------
+// VstupakHelper employee extraction
+// -----------------------------
+
+const employeeFields = [
+  { key: "medicalc", label: "Medicalc", patterns: ["medicalc"] },
+  { key: "pivotal", label: "Pivotal", patterns: ["pivotal"] },
+  {
+    key: "employeeNumber",
+    label: "Osobní číslo",
+    patterns: ["osobni cislo zamestnance", "osobni cislo"],
+  },
+  { key: "birthDate", label: "Datum narození", patterns: ["datum narozeni"] },
+  { key: "fullName", label: "Jméno a příjmení", patterns: ["jmeno a prijmeni"] },
+  { key: "title", label: "Titul", patterns: ["titul"] },
+];
+
+function normalizeEmployeeText(value) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function getFormValue(lines, patterns) {
+  for (const line of lines) {
+    const separatorIndex = line.indexOf(":");
+    if (separatorIndex === -1) continue;
+
+    const label = normalizeEmployeeText(line.slice(0, separatorIndex));
+    const matchedPattern = patterns.some(
+      (pattern) => label === pattern || label.startsWith(`${pattern} `),
+    );
+
+    if (matchedPattern) {
+      return line.slice(separatorIndex + 1).trim() || "Nenalezeno";
+    }
+  }
+
+  return "Nenalezeno";
+}
+
+function extractEmployeeData(text) {
+  const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const values = Object.fromEntries(
+    employeeFields.map((field) => [field.key, getFormValue(lines, field.patterns)]),
+  );
+
+  if (values.fullName === "Nenalezeno") {
+    const firstName = getFormValue(lines, ["jmeno"]);
+    const lastName = getFormValue(lines, ["prijmeni"]);
+    if (firstName !== "Nenalezeno" || lastName !== "Nenalezeno") {
+      values.fullName = [firstName, lastName]
+        .filter((value) => value !== "Nenalezeno")
+        .join(" ");
+    }
+  }
+
+  return values;
+}
+
+function renderEmployeeResult(values) {
+  employeeResultGrid.innerHTML = employeeFields
+    .map(
+      (field) => `
+        <div class="employee-result-item">
+          <span>${field.label}</span>
+          <div class="employee-result-value">
+            <strong>${escapeHtml(values[field.key])}</strong>
+            <button class="copy-field-button" type="button" data-copy-key="${field.key}"
+              aria-label="Copy ${field.label}" title="Copy ${field.label}">
+              <i class="bi bi-copy"></i>
+            </button>
+          </div>
+        </div>
+      `,
+    )
+    .join("");
+  employeeResultSection.hidden = false;
+}
+
+function escapeHtml(value) {
+  const element = document.createElement("span");
+  element.textContent = value;
+  return element.innerHTML;
+}
+
+extractEmployeeButton.addEventListener("click", function () {
+  const text = employeeFormText.value.trim();
+
+  if (!text) {
+    alert("Paste the employee form first.");
+    employeeFormText.focus();
+    return;
+  }
+
+  renderEmployeeResult(extractEmployeeData(text));
+});
+
+async function copyEmployeeText(text, button, defaultContent) {
+  try {
+    await navigator.clipboard.writeText(text);
+    button.innerHTML = '<i class="bi bi-check2"></i>';
+    button.setAttribute("aria-label", "Copied");
+    setTimeout(() => {
+      button.innerHTML = defaultContent;
+      button.setAttribute("aria-label", button.title || "Copy");
+    }, 1600);
+  } catch (error) {
+    console.error("Could not copy employee data:", error);
+    alert("The extracted data could not be copied.");
+  }
+}
+
+employeeResultGrid.addEventListener("click", function (event) {
+  const button = event.target.closest(".copy-field-button");
+  if (!button) return;
+
+  const values = extractEmployeeData(employeeFormText.value.trim());
+  const field = employeeFields.find((item) => item.key === button.dataset.copyKey);
+  if (!field) return;
+
+  copyEmployeeText(values[field.key], button, '<i class="bi bi-copy"></i>');
+});
+
+copyEmployeeResultButton.addEventListener("click", function () {
+  const values = extractEmployeeData(employeeFormText.value.trim());
+  const result = employeeFields
+    .map((field) => `${field.label}: ${values[field.key]}`)
+    .join("\n");
+
+  copyEmployeeText(
+    result,
+    copyEmployeeResultButton,
+    '<i class="bi bi-copy me-1"></i>Copy all',
+  );
 });

@@ -1,0 +1,39 @@
+
+Tabulka formuláře
+
+Datum vytvoření: 22.09.2026
+Zakladatel: EUC\anna.kratochvilova
+Datum nástupu: 01.10.2026
+Jméno: Marek
+Příjmení: Rucki
+Titul: Mgr.
+Společnost: Canadian Medical s.r.o.
+Oddělení: Medical - Lekari - Fyzioterapie
+Název pozice: Fyzioterapeut
+Nadřízený: Mgr. Pavla Marková
+Místo výkonu práce: Praha 6 - AFI
+Telefonní číslo (mobilní): +420 724 216 335 (číslo je soukromé, nikde prosím neuvádět)
+Osobní číslo zaměstnance: 51-362235
+Datum narození: 29. 12. 1986
+Nákladové středisko: MCLAFI_FYZ
+Licence MS Office | Teams: F3 (sdílené PC, sestra, lékař)
+Datum předání techniky: 02.10.2026
+Místo předání techniky: Pouze token - během individuálního proškolení 2.10.
+Založit e-mail: Ano
+Zařadit do zaměstnanecké e-mailové skupiny: Ano
+Vybrané skupiny: zamestnanci@canadian.cz; CM Lékařský team; AFI Canadian lékaři; AFI Canadian klinika; AFI Canadian fyzioterapie
+Medicalc: Ano
+Specifická role Medicalcu: lékař (fyzio)
+OkBase: Ano
+Specifická role OK Base: běžný zaměstnanec
+Založit benefitní plán Medlek: Ano
+Možnosti tisku: Ano
+Upřesnění možnosti tisku: standard
+Přístup do sdílené složky: Ano
+Upřesnění přístupu do sdílených složek: lékaři_v; lékaři_n; HR_v
+Zažádat E-Recept token/certifikát: Zažádat
+Má E-recept SÚKL přístupy: Má
+Poznámka: O token bude zažádáno standardní cestou. Předem moc děkuji, A.
+Jazyk: AJ
+Věkové omezení: Bez omezení
+Sonografická vyšetření: Ne

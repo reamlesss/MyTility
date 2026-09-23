@@ -115,6 +115,11 @@ body {
 .main-content {
   width: 100%;
 }
+#helpdeskSection {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  padding: 0 12px 32px;
+}
 .home-section {
   display: grid;
   min-height: 62vh;
@@ -468,6 +473,58 @@ h4 {
 .form-control::placeholder {
   color: var(--muted);
 }
+.employee-result {
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.employee-result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.employee-result-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 76px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--soft) 34%, var(--surface));
+}
+.employee-result-item span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.employee-result-item strong {
+  color: var(--text);
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+.employee-result-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.copy-field-button {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  background: var(--surface);
+}
+.copy-field-button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
 textarea::placeholder {
   color: var(--muted);
 }
@@ -571,6 +628,12 @@ textarea {
   }
   .tool-button {
     justify-content: center;
+  }
+  .employee-result {
+    padding: 16px;
+  }
+  .employee-result-grid {
+    grid-template-columns: 1fr;
   }
 }
 
